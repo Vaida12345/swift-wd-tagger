@@ -1,0 +1,18 @@
+{
+  "Inputs" : {
+    "input" : {
+      "MLFeatureShortDescription" : "Input Image"
+    }
+  },
+  "Outputs" : {
+    "output" : {
+      "MLFeatureShortDescription" : "10861 values, each corresponds to the prob of a tag in vocab"
+    }
+  },
+  "TrainingInputs" : {
+
+  },
+  "States" : {
+
+  }
+}
