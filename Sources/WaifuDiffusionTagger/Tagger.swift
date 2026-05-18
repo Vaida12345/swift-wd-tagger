@@ -39,7 +39,7 @@ public final class Tagger {
             bitmapInfo: CGBitmapInfo(alpha: .premultipliedFirst)
         )! // input requires kCVPixelFormatType_32ARGB
         
-        context.setFillColor(.white)
+        context.setFillColor(CGColor(red: 0, green: 0, blue: 0, alpha: 1))
         context.fill(CGRect(origin: .zero, size: CGSize(width: 448, height: 448)))
         
         context.draw(

@@ -17,7 +17,7 @@ import UIKit
 #if os(macOS)
     image = NSImage(contentsOf: url)!.cgImage(forProposedRect: nil, context: nil, hints: nil)!
 #else
-    image = UIImage(contentsOfFile: url.path)!.cgImage()!
+    image = UIImage(contentsOfFile: url.path)!.cgImage!
 #endif
     let output = try await tagger.predict(image)
     let collected = output.collected(thresholds: [.character : 0.5, .general: 0.5, .rating : 0.5])
