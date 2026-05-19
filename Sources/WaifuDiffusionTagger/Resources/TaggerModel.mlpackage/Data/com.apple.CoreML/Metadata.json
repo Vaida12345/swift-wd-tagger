@@ -1,5 +1,5 @@
 {
-  "MLModelVersionStringKey" : "--",
+  "MLModelVersionStringKey" : "1.0",
   "MLModelDescriptionKey" : "CoreML Model of SmilingWolf's Tagger Model",
   "MLModelCreatorDefinedKey" : {
     "com.github.apple.coremltools.conversion_date" : "2026-05-19",

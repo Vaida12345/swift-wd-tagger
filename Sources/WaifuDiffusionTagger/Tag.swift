@@ -11,7 +11,7 @@ import TabularData
 
 extension Tagger {
     
-    public struct Tag {
+    public struct Tag: Sendable, Hashable {
         
         /// Identifier, not used.
         public let tag_id: Int
@@ -29,7 +29,7 @@ extension Tagger {
             return dataFrame.rows.map { row in
                 Tag(
                     tag_id: row["tag_id", Int.self]!,
-                    name: row["name", String.self]!,
+                    name: row["name", String.self]!.replacingOccurrences(of: "_", with: " "),
                     category: Category(rawValue: row["category", Int.self]!)!,
                     count: row["count", Int.self]!
                 )

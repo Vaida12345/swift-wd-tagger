@@ -35,6 +35,11 @@ extension Tagger {
                 i &+= 1
             }
             
+            // sort results
+            for key in results.keys {
+                results[key]?.sort(by: { $0.probability > $1.probability })
+            }
+            
             return results
         }
         
@@ -50,6 +55,12 @@ extension Tagger {
             public var description: String {
                 "\(self.tag.name): \(self.probability.formatted(.number.precision(.fractionLength(2))))"
             }
+            
+            #if DEBUG
+            public static var preview: Element {
+                Element(tag: Tag(tag_id: 001, name: "general", category: .general, count: 1000), probability: 0.75)
+            }
+            #endif
         }
         
         public struct Iterator: IteratorProtocol {

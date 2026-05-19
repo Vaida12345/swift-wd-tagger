@@ -6,6 +6,7 @@
 //
 
 import CoreML
+import Accelerate
 
 
 public final class Tagger {
@@ -28,20 +29,30 @@ public final class Tagger {
     
     /// Predict tag for the given image.
     public func predict(_ image: CGImage) async throws -> Output {
-        // transform image
+        let rgbaBuffer = UnsafeMutableBufferPointer<UInt8>.allocate(capacity: 448 * 448 * 4)
+        defer { rgbaBuffer.deallocate() }
+        
+        let inferenceBuffer = UnsafeMutableBufferPointer<Float32>.allocate(capacity: 448 * 448 * 3)
+        defer { inferenceBuffer.deallocate() }
+        
+        // Draw into an RGBA context over an explicit white background, then strip alpha.
         let context = CGContext(
-            data: nil,
+            data: rgbaBuffer.baseAddress,
             width: 448,
             height: 448,
             bitsPerComponent: 8,
             bytesPerRow: 448 * 4,
             space: CGColorSpaceCreateDeviceRGB(),
-            bitmapInfo: CGBitmapInfo(alpha: .premultipliedFirst)
-        )! // input requires kCVPixelFormatType_32ARGB
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue
+        )!
         
-        context.setFillColor(CGColor(red: 0, green: 0, blue: 0, alpha: 1))
+        context.interpolationQuality = .high
+        
+        // white background
+        context.setFillColor(CGColor(red: 1, green: 1, blue: 1, alpha: 1))
         context.fill(CGRect(origin: .zero, size: CGSize(width: 448, height: 448)))
         
+        // center padded
         context.draw(
             image,
             in: CGRect(
@@ -50,9 +61,27 @@ public final class Tagger {
             )
         )
         
-        let image = context.makeImage()!
+        // Convert RGBA8 to planar RGB float32 in [0, 1] for NCHW layout.
+        var i = 0
+        let upperBound = 448 * 448
+        let planeSize = upperBound
+        while i < upperBound {
+            inferenceBuffer.initializeElement(at: i, to: Float32(rgbaBuffer[i &* 4 + 0]) / 255)
+            inferenceBuffer.initializeElement(at: planeSize + i, to: Float32(rgbaBuffer[i &* 4 + 1]) / 255)
+            inferenceBuffer.initializeElement(at: (planeSize &* 2) + i, to: Float32(rgbaBuffer[i &* 4 + 2]) / 255)
+            
+            i &+= 1
+        }
         
-        let input = try TaggerModelInput(inputWith: image)
+        let input = try TaggerModelInput(
+            input: MLMultiArray(
+                dataPointer: inferenceBuffer.baseAddress!,
+                shape: [1, 3, 448, 448],
+                dataType: .float32,
+                strides: [3 * 448 * 448, 448 * 448, 448, 1] as [NSNumber]
+            )
+        )
+        
         let probabilities = try await self.model.prediction(input: input).output
         
         precondition(self.tags.count == Tagger.tagsCount)
@@ -62,7 +91,7 @@ public final class Tagger {
             probabilities: [Float](unsafeUninitializedCapacity: Tagger.tagsCount) { buffer, initializedCount in
                 initializedCount = Tagger.tagsCount
                 probabilities.withUnsafeBytes { bytes in
-                    _ = memcpy(buffer.baseAddress, bytes.baseAddress, Tagger.tagsCount * MemoryLayout.stride(ofValue: Float.self))
+                    _ = memcpy(buffer.baseAddress, bytes.baseAddress, Tagger.tagsCount * MemoryLayout<Float>.stride)
                 }
             },
             tags: self.tags

@@ -6,14 +6,18 @@ from torch.nn import functional as F
 import coremltools as ct
 import timm
 import numpy as np
+from timm.data import create_transform, resolve_data_config
 
 class CoreMLWrapper(nn.Module):
     def __init__(self, model):
         super().__init__()
         self.model = model
+        self.transform: Compose = create_transform(**resolve_data_config(model.pretrained_cfg, model=model))  # type: ignore
 
     def forward(self, x):
-        # force no Python casting paths
+        x = self.transform(x)
+        x = x[:, [2, 1, 0]]  # BGR to RGB
+        
         outputs = self.model(x)
         outputs = F.sigmoid(outputs)
         return outputs
@@ -30,9 +34,9 @@ transformed_model = torch.jit.trace(wrapped, example_input)
 
 mlmodel = ct.convert(
     transformed_model,
-    inputs=[ct.ImageType(name="input", shape=example_input.shape)],
+    inputs=[ct.TensorType(name="input", shape=example_input.shape)],
     outputs=[ct.TensorType(name="output", dtype=np.float32)],
     convert_to="neuralnetwork"
 )
 
-mlmodel.save("model.mlmodel")
+mlmodel.save("TaggerModel.mlmodel")

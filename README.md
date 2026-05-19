@@ -19,7 +19,7 @@ let output = try await tagger.predict(image)
 let collected = output.collected(thresholds: [.character : 0.5, .general: 0.5, .rating : 0.5])
 
 print(collected)
-// [rating: [general: 0.93], general: [simple_background: 0.67, monochrome: 0.59, no_humans: 0.91, animal_focus: 0.51]]
+// [rating: [general: 0.93], general: [simple background: 0.67, monochrome: 0.59, no humans: 0.91, animal focus: 0.51]]
 ````
 
 ## Credits

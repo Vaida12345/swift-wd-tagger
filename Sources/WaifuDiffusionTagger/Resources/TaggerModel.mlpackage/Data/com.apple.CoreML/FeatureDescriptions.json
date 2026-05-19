@@ -1,7 +1,7 @@
 {
   "Inputs" : {
     "input" : {
-      "MLFeatureShortDescription" : "Input Image"
+      "MLFeatureShortDescription" : "Input image"
     }
   },
   "Outputs" : {

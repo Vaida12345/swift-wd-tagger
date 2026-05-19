@@ -25,7 +25,7 @@ import UIKit
     print(collected)
     
     #expect(Array(output).count == 10861)
-    #expect(collected[.general]!.contains(where: { $0.tag.name == "simple_background" }))
-    #expect(collected[.general]!.contains(where: { $0.tag.name == "no_humans" }))
-    #expect(collected[.general]!.contains(where: { $0.tag.name == "animal_focus" }))
+    #expect(collected[.general]!.contains(where: { $0.tag.name == "dog" }))
+    #expect(collected[.general]!.contains(where: { $0.tag.name == "no humans" }))
+    #expect(collected[.general]!.contains(where: { $0.tag.name == "shiba inu" }))
 }
