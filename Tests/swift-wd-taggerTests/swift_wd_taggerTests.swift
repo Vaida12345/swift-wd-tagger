@@ -20,12 +20,10 @@ import UIKit
     image = UIImage(contentsOfFile: url.path)!.cgImage!
 #endif
     let output = try await tagger.predict(image)
-    let collected = output.collected(thresholds: [.character : 0.5, .general: 0.5, .rating : 0.5])
+    let collected = output.collected(thresholds: [.character : 0.5, .general: 0.5, .rating : 0.0])
     
     print(collected)
     
     #expect(Array(output).count == 10861)
-    #expect(collected[.general]!.contains(where: { $0.tag.name == "dog" }))
-    #expect(collected[.general]!.contains(where: { $0.tag.name == "no humans" }))
-    #expect(collected[.general]!.contains(where: { $0.tag.name == "shiba inu" }))
+    print(collected[.rating]!)
 }

@@ -45,6 +45,7 @@ extension Tagger {
         
         
         public struct Element: CustomStringConvertible {
+            
             public let tag: Tag
             public let probability: Float
             @inlinable
@@ -56,11 +57,21 @@ extension Tagger {
                 "\(self.tag.name): \(self.probability.formatted(.number.precision(.fractionLength(2))))"
             }
             
-            #if DEBUG
+            
+            internal init(tag: Tagger.Tag, probability: Float) {
+                self.tag = tag
+                self.probability = probability
+            }
+            
+            public init(id: Int, name: String, category: Tag.Category, count: Int, probability: Float) {
+                self.init(tag: Tag(tag_id: id, name: name, category: category, count: count), probability: probability)
+            }
+            
+#if DEBUG
             public static var preview: Element {
                 Element(tag: Tag(tag_id: 001, name: "general", category: .general, count: 1000), probability: 0.75)
             }
-            #endif
+#endif
         }
         
         public struct Iterator: IteratorProtocol {
