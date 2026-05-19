@@ -21,7 +21,11 @@ public final class Tagger {
     /// Loads the tagger into memory.
     ///
     /// - Tip: Loading a tagger is a time-consuming process, taking around 800 ms. Additionally, it requires a significant amount of memory while an instance exists, around 500 MB.
-    public init(configuration: MLModelConfiguration = MLModelConfiguration()) async throws {
+    public init() async throws {
+        let configuration = MLModelConfiguration()
+        // ANE is not only slow, but takes significantly longer to compile.
+        configuration.computeUnits = .cpuAndGPU
+        
         self.model = try await TaggerModel.load(configuration: configuration)
         self.tags = try Tag.load(from: Bundle.module.url(forResource: "selected_tags", withExtension: "csv")!)
         precondition(self.tags.count == Tagger.tagsCount)

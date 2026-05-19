@@ -1,8 +1,8 @@
 {
-  "MLModelVersionStringKey" : "1.0",
+  "MLModelVersionStringKey" : "1.1",
   "MLModelDescriptionKey" : "CoreML Model of SmilingWolf's Tagger Model",
   "MLModelCreatorDefinedKey" : {
-    "com.github.apple.coremltools.conversion_date" : "2026-05-19",
+    "com.github.apple.coremltools.conversion_date" : "2026-05-20",
     "model_repo" : "https:\/\/huggingface.co\/SmilingWolf\/wd-swinv2-tagger-v3\/",
     "com.github.apple.coremltools.source" : "torch==2.12.0",
     "com.github.apple.coremltools.version" : "9.0",

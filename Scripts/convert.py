@@ -36,7 +36,8 @@ mlmodel = ct.convert(
     transformed_model,
     inputs=[ct.TensorType(name="input", shape=example_input.shape)],
     outputs=[ct.TensorType(name="output", dtype=np.float32)],
-    convert_to="neuralnetwork"
+    convert_to="mlprogram",
+    compute_units=ct.ComputeUnit.CPU_AND_GPU # ANE is not only slow, but takes significantly longer to compile.
 )
 
-mlmodel.save("TaggerModel.mlmodel")
+mlmodel.save("TaggerModel.mlpackage")

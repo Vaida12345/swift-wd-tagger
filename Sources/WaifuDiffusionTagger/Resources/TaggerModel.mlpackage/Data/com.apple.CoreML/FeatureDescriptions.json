@@ -1,12 +1,12 @@
 {
   "Inputs" : {
     "input" : {
-      "MLFeatureShortDescription" : "Input image"
+      "MLFeatureShortDescription" : "Input image, planar RGB float32 in [0, 1] for NCHW layout"
     }
   },
   "Outputs" : {
     "output" : {
-      "MLFeatureShortDescription" : "10861 values, each corresponds to the prob of a tag in vocab"
+      "MLFeatureShortDescription" : "10861 values, each corresponds to the prob\n of a tag in vocab"
     }
   },
   "TrainingInputs" : {
